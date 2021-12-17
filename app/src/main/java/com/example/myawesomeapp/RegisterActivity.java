@@ -40,12 +40,11 @@ public class RegisterActivity extends AppCompatActivity {
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
-
     }
 
     public void onRegisterClick(View baseView) throws JSONException {
-        String email = editTextEmail.getText().toString();
-        String username = editTextUsername.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
+        String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
 
         JSONObject json = new JSONObject();

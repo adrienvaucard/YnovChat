@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_main"
+    app:startDestination="@id/messageListFragment">
+
+    <fragment
+        android:id="@+id/messageDetailFragment"
+        android:name="com.example.myawesomeapp.fragment.MessageDetailFragment"
+        android:label="fragment_message_detail"
+        tools:layout="@layout/fragment_message_detail" />
+    <fragment
+        android:id="@+id/messageListFragment"
+        android:name="com.example.myawesomeapp.fragment.MessageListFragment"
+        android:label="fragment_message_list"
+        tools:layout="@layout/fragment_message_list" >
+        <action
+            android:id="@+id/action_messageListFragment_to_messageDetailFragment"
+            app:destination="@id/messageDetailFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/messageListFragment" />
+    </fragment>
+</navigation>

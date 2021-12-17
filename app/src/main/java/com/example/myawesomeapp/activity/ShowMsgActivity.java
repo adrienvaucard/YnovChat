@@ -1,4 +1,4 @@
-package com.example.myawesomeapp;
+package com.example.myawesomeapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingComponent;
@@ -6,6 +6,9 @@ import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
 
+import com.example.myawesomeapp.Message;
+import com.example.myawesomeapp.R;
+import com.example.myawesomeapp.User;
 import com.example.myawesomeapp.databinding.ActivityShowMsgBinding;
 
 public class ShowMsgActivity extends AppCompatActivity {

@@ -19,6 +19,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.myawesomeapp.Message;
 import com.example.myawesomeapp.R;
@@ -32,8 +35,10 @@ import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MessageListFragment extends Fragment {
@@ -49,6 +54,8 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        ImageButton imageButtonSendMsg = view.findViewById(R.id.imageButtonSendMsg);
+        imageButtonSendMsg.setOnClickListener(view1 -> sendMessage());
         fetchMessages();
 
         super.onViewCreated(view, savedInstanceState);
@@ -58,7 +65,6 @@ public class MessageListFragment extends Fragment {
         SharedPreferences sp = getContext().getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
         String token = sp.getString(getString(R.string.keyJwt), "Hello");
 
-        // String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzAyLCJpYXQiOjE2Mzk3NDY4NTIsImV4cCI6MTY0MjMzODg1Mn0.pZTreSlPiDrA7VEfYJSepW8vZDak65aS_knUEbrh_ss";
         Request requestMsg = new Request.Builder()
                 .url("https://flutter-learning.mooo.com/messages")
                 .header("Authorization", "Bearer " + token)
@@ -88,7 +94,34 @@ public class MessageListFragment extends Fragment {
     }
 
     private void sendMessage() {
+        SharedPreferences sp = getContext().getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
+        String token = sp.getString(getString(R.string.keyJwt), "Hello");
 
+        EditText messageToSend = getView().findViewById(R.id.editTextSendMessage);
+
+        Log.i(TAG, "sendMessage: HELLO");
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("content", messageToSend.getText().toString())
+                .add("isImage", "false")
+                .build();
+
+        Request requestMsg = new Request.Builder()
+                .url("https://flutter-learning.mooo.com/messages")
+                .header("Authorization", "Bearer " + token)
+                .post(formBody)
+                .build();
+        client.newCall(requestMsg).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "onFailure: " + "Getmsg - " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                fetchMessages();
+            }
+        });
     }
 
     @Override

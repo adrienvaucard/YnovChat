@@ -71,16 +71,18 @@ public class MessageListFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                // Log.i(TAG, "onResponse: " + response.body().string());
+                if (response.code() == 200) {
+                    ArrayList<Message> allMsgs = new Gson().fromJson(
+                            response.body().string(),
+                            new TypeToken<ArrayList<Message>>(){}.getType()
+                    );
 
-                ArrayList<Message> allMesgs = new Gson().fromJson(
-                        response.body().string(),
-                        new TypeToken<ArrayList<Message>>(){}.getType()
-                );
-
-                getActivity().runOnUiThread(() -> {
-                    showMessages(allMesgs);
-                });
+                    getActivity().runOnUiThread(() -> {
+                        showMessages(allMsgs);
+                    });
+                } else {
+                    Log.e(TAG, "onResponse: " + "Authentification incorrecte" );
+                }
             }
         });
     }

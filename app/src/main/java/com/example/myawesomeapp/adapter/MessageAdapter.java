@@ -43,6 +43,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageHolder> {
                 (view) -> Navigation.findNavController(holder.itemView)
                 .navigate(action)
         );
+        holder.binding.setMessage(msg);
     }
 
     @Override

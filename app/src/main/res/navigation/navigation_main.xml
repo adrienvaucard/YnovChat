@@ -9,7 +9,11 @@
         android:id="@+id/messageDetailFragment"
         android:name="com.example.myawesomeapp.fragment.MessageDetailFragment"
         android:label="fragment_message_detail"
-        tools:layout="@layout/fragment_message_detail" />
+        tools:layout="@layout/fragment_message_detail" >
+        <argument
+            android:name="Message"
+            app:argType="com.example.myawesomeapp.Message" />
+    </fragment>
     <fragment
         android:id="@+id/messageListFragment"
         android:name="com.example.myawesomeapp.fragment.MessageListFragment"

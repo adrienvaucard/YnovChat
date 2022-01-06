@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.myawesomeapp.Message;
 import com.example.myawesomeapp.R;
+import com.example.myawesomeapp.adapter.MessageAdapter;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -42,13 +49,6 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // Get button
-        Button button = view.findViewById(R.id.buttontoDetail);
-        // On Click, trigger action_messageList
-        button.setOnClickListener(btn ->
-                Navigation.findNavController(view)
-                        .navigate(R.id.action_messageListFragment_to_messageDetailFragment)
-        );
         fetchMessages();
 
         super.onViewCreated(view, savedInstanceState);
@@ -71,8 +71,16 @@ public class MessageListFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Log.i(TAG, "onResponse: " + response.body().string());
+                // Log.i(TAG, "onResponse: " + response.body().string());
 
+                ArrayList<Message> allMesgs = new Gson().fromJson(
+                        response.body().string(),
+                        new TypeToken<ArrayList<Message>>(){}.getType()
+                );
+
+                getActivity().runOnUiThread(() -> {
+                    showMessages(allMesgs);
+                });
             }
         });
     }
@@ -81,5 +89,12 @@ public class MessageListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         client = new OkHttpClient();
+    }
+
+    private void showMessages(ArrayList<Message> msgs) {
+        RecyclerView rv = getView().findViewById(R.id.recylerView);
+        MessageAdapter adapter = new MessageAdapter(msgs);
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.setAdapter(adapter);
     }
 }

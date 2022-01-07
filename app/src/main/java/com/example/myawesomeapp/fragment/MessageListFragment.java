@@ -9,6 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 import com.example.myawesomeapp.Message;
 import com.example.myawesomeapp.R;
 import com.example.myawesomeapp.adapter.MessageAdapter;
+import com.example.myawesomeapp.viewmodel.ListFragmentViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -43,9 +46,21 @@ import okhttp3.Response;
 
 public class MessageListFragment extends Fragment {
     OkHttpClient client;
-    RecyclerView rv;
-    MessageAdapter adapter;
+    private RecyclerView rv;
+    private SharedPreferences sp;
+    private String token;
+    private MessageAdapter adapter;
+    private ListFragmentViewModel vm;
     private static final String TAG = "MessageListFragment";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        client = new OkHttpClient();
+        sp = getContext().getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
+        token = sp.getString(getString(R.string.keyJwt), "Hello");
+        vm = new ViewModelProvider(this).get(ListFragmentViewModel.class);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,17 +71,21 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        initializeMessages();
+        Observer<ArrayList<Message>> observerList = messages -> adapter.setMessageArrayList(messages);
+        vm.getMessageArrayList().observe(getViewLifecycleOwner(), observerList);
+
+        if (vm.getMessageArrayList().getValue().isEmpty()) {
+            fetchMessages();
+        }
+
         ImageButton imageButtonSendMsg = view.findViewById(R.id.imageButtonSendMsg);
         imageButtonSendMsg.setOnClickListener(view1 -> sendMessage());
-        fetchMessages();
 
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void fetchMessages() {
-        SharedPreferences sp = getContext().getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
-        String token = sp.getString(getString(R.string.keyJwt), "Hello");
-
+    public void fetchMessages() {
         Request requestMsg = new Request.Builder()
                 .url("https://flutter-learning.mooo.com/messages")
                 .header("Authorization", "Bearer " + token)
@@ -84,10 +103,7 @@ public class MessageListFragment extends Fragment {
                             response.body().string(),
                             new TypeToken<ArrayList<Message>>(){}.getType()
                     );
-
-                    getActivity().runOnUiThread(() -> {
-                        showMessages(allMsgs);
-                    });
+                        vm.getMessageArrayList().postValue(allMsgs);
                 } else {
                     Log.e(TAG, "onResponse: " + "Authentification incorrecte" );
                 }
@@ -137,15 +153,9 @@ public class MessageListFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        client = new OkHttpClient();
-    }
-
-    private void showMessages(ArrayList<Message> msgs) {
+    private void initializeMessages() {
         rv = getView().findViewById(R.id.recylerView);
-        adapter = new MessageAdapter(msgs);
+        adapter = new MessageAdapter();
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
     }

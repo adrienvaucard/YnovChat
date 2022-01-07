@@ -30,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.item_refresh) {
             Toast.makeText(this, "Chargement des nouveaux messages", Toast.LENGTH_SHORT).show();
             MessageListFragment mlf = (MessageListFragment) getSupportFragmentManager().findFragmentById(R.id.messageListFragment);
-            //mlf.refresh();
+
+            if (mlf != null) {
+                mlf.fetchMessages();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

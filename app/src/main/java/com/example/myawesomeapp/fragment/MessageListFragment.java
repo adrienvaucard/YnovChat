@@ -81,7 +81,10 @@ public class MessageListFragment extends Fragment {
         setHasOptionsMenu(true);
 
         initializeMessages();
-        Observer<ArrayList<Message>> observerList = messages -> adapter.setMessageArrayList(messages);
+        Observer<ArrayList<Message>> observerList = messages -> {
+            adapter.setMessageArrayList(messages);
+            rv.scrollToPosition(adapter.getItemCount() - 1);
+        };
         vm.getMessageArrayList().observe(getViewLifecycleOwner(), observerList);
 
         if (vm.getMessageArrayList().getValue().isEmpty()) {
@@ -160,6 +163,7 @@ public class MessageListFragment extends Fragment {
                 }
             }
         });
+        rv.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     @Override
@@ -172,6 +176,7 @@ public class MessageListFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.item_refresh) {
             fetchMessages();
+            rv.scrollToPosition(adapter.getItemCount() - 1);
         }
         return super.onOptionsItemSelected(item);
     }

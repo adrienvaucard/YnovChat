@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,12 +19,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.myawesomeapp.Message;
 import com.example.myawesomeapp.R;
@@ -71,6 +77,9 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        ((AppCompatActivity)getActivity()).setSupportActionBar(view.findViewById(R.id.toolbar));
+        setHasOptionsMenu(true);
+
         initializeMessages();
         Observer<ArrayList<Message>> observerList = messages -> adapter.setMessageArrayList(messages);
         vm.getMessageArrayList().observe(getViewLifecycleOwner(), observerList);
@@ -151,6 +160,20 @@ public class MessageListFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_list_msg, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.item_refresh) {
+            fetchMessages();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initializeMessages() {

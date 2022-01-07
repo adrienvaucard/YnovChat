@@ -18,23 +18,4 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_list_msg, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.item_refresh) {
-            Toast.makeText(this, "Chargement des nouveaux messages", Toast.LENGTH_SHORT).show();
-            MessageListFragment mlf = (MessageListFragment) getSupportFragmentManager().findFragmentById(R.id.messageListFragment);
-
-            if (mlf != null) {
-                mlf.fetchMessages();
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

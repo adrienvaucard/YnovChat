@@ -23,6 +23,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageHolder> {
         this.messageArrayList = messageArrayList;
     }
 
+    public void addMessage(Message m) {
+        messageArrayList.add(m);
+        notifyItemInserted(messageArrayList.size() - 1);
+    }
+
     @NonNull
     @Override
     public MessageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

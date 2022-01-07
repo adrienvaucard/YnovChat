@@ -43,6 +43,8 @@ import okhttp3.Response;
 
 public class MessageListFragment extends Fragment {
     OkHttpClient client;
+    RecyclerView rv;
+    MessageAdapter adapter;
     private static final String TAG = "MessageListFragment";
 
     @Override
@@ -119,7 +121,18 @@ public class MessageListFragment extends Fragment {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                fetchMessages();
+                String resBody = response.body().string();
+                if (response.code() == 200) {
+                    Gson gson = new Gson();
+                    Message msgPosted = gson.fromJson(resBody, Message.class);
+                    getActivity().runOnUiThread(() -> {
+                        adapter.addMessage(msgPosted);
+                        messageToSend.setText("");
+
+                    });
+                } else {
+                    Log.e(TAG, "onResponse: " + "Erreur");
+                }
             }
         });
     }
@@ -131,8 +144,8 @@ public class MessageListFragment extends Fragment {
     }
 
     private void showMessages(ArrayList<Message> msgs) {
-        RecyclerView rv = getView().findViewById(R.id.recylerView);
-        MessageAdapter adapter = new MessageAdapter(msgs);
+        rv = getView().findViewById(R.id.recylerView);
+        adapter = new MessageAdapter(msgs);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
     }

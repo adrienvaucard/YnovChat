@@ -38,7 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        SharedPreferences sp = getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+
+        if(sp.getString(getString(R.string.keyJwt), "Hello") != "Hello") {
+            onUserLoggedIn();
+        }
 
         binding.buttonLogin.setOnClickListener(view -> {
             String identifier = binding.editTextUsername.getText().toString();
@@ -79,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
 
                             String token = responseBody.getString("jwt");
 
-                            SharedPreferences sp = getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
                             sp.edit().putString(getString(R.string.keyJwt), token).commit();
 
                             onUserLoggedIn();

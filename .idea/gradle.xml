@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/mapappynov" />
             <option value="$PROJECT_DIR$/viewmodelcounter" />
+            <option value="$PROJECT_DIR$/webviewappynov" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

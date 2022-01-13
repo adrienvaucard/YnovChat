@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     String body = response.body().string();
-                    Log.i(TAG, "onResponse: " + body);
 
                     if (response.code() == 200) {
                         try {

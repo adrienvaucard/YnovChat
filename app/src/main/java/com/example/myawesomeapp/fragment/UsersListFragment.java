@@ -1,5 +1,8 @@
 package com.example.myawesomeapp.fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,22 +14,38 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.myawesomeapp.Message;
 import com.example.myawesomeapp.R;
 import com.example.myawesomeapp.User;
 import com.example.myawesomeapp.adapter.UserAdapter;
 import com.example.myawesomeapp.viewmodel.ListUserFragmentViewModel;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class UsersListFragment extends Fragment {
     ListUserFragmentViewModel vm;
     private RecyclerView rv;
     private UserAdapter userAdapter;
+    OkHttpClient client;
+    private SharedPreferences sp;
+    private String token;
+    private static final String TAG = "UsereListFragment";
+
 
     public UsersListFragment() {
         // Required empty public constructor
@@ -35,7 +54,42 @@ public class UsersListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        client = new OkHttpClient();
+        sp = getContext().getSharedPreferences(getString(R.string.spConfigName), MODE_PRIVATE);
+        token = sp.getString(getString(R.string.keyJwt), "Hello");
+
         vm = new ViewModelProvider(this).get(ListUserFragmentViewModel.class);
+        if (vm.getUserArrayList().getValue().isEmpty()) {
+            fetchUsers();
+        } else {
+            userAdapter.setArrayListUsers(vm.getUserArrayList().getValue());
+        }
+    }
+
+    private void fetchUsers() {
+        Request requestMsg = new Request.Builder()
+                .url("https://flutter-learning.mooo.com/users")
+                .header("Authorization", "Bearer " + token)
+                .build();
+        client.newCall(requestMsg).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "onFailure: " + "getUsers - " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.code() == 200) {
+                    ArrayList<User> alUsers = new Gson().fromJson(
+                            response.body().string(),
+                            new TypeToken<ArrayList<User>>(){}.getType()
+                    );
+                    vm.getUserArrayList().postValue(alUsers);
+                } else {
+                    Log.e(TAG, "onResponse: " + "Authentification incorrecte" );
+                }
+            }
+        });
     }
 
     @Override

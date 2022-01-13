@@ -2,7 +2,6 @@ package com.example.myawesomeapp.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -12,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,19 +22,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.myawesomeapp.Message;
 import com.example.myawesomeapp.R;
 import com.example.myawesomeapp.adapter.MessageAdapter;
 import com.example.myawesomeapp.viewmodel.ListFragmentViewModel;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -177,7 +170,11 @@ public class MessageListFragment extends Fragment {
         if (item.getItemId() == R.id.item_refresh) {
             fetchMessages();
             rv.scrollToPosition(adapter.getItemCount() - 1);
+        } else if (item.getItemId() == R.id.item_listUsers) {
+            Navigation.findNavController(getView()).navigate(R.id.action_messageListFragment_to_usersListFragment);
         }
+
+
         return super.onOptionsItemSelected(item);
     }
 

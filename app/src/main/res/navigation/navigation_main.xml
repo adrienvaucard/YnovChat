@@ -24,5 +24,13 @@
             app:destination="@id/messageDetailFragment"
             app:popUpToInclusive="true"
             app:popUpTo="@id/messageListFragment" />
+        <action
+            android:id="@+id/action_messageListFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/usersListFragment"
+        android:name="com.example.myawesomeapp.fragment.UsersListFragment"
+        android:label="fragment_list_users"
+        tools:layout="@layout/fragment_list_users" />
 </navigation>

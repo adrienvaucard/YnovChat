@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 rootProject.name = "My Awesome App"
 include ':app'
 include ':viewmodelcounter'
+include ':mapappynov'
